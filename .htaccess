@@ -1,0 +1,14 @@
+RewriteEngine On
+RewriteBase /vulcflow/
+
+# 1. Garante que se o usuário digitar algo que termine em .php (ex: login.php), 
+# ele seja redirecionado para a versão limpa (ex: /login) para evitar o loop.
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
+RewriteRule ^ %1 [R=301,L]
+
+# 2. Se for um arquivo real (imagem, css, js), não faz nada e carrega o arquivo.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# 3. Tudo o que não for arquivo real cai aqui e vira ?page=valor
+RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]

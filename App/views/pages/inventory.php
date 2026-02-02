@@ -1,7 +1,4 @@
-<?php
-require_once __DIR__ . '/../../Config/init.php'; 
-include_once "layouts/header.php"; 
-?>
+
 
 <div id="modalSucesso" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-black/50 backdrop-blur-sm p-4">
     <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl text-center transform scale-90 transition-transform duration-300">
@@ -9,7 +6,7 @@ include_once "layouts/header.php";
             <i class="fas fa-check"></i>
         </div>
         <h3 class="text-2xl font-black text-brand-blue uppercase italic mb-2">Sucesso!</h3>
-        <p class="text-gray-500 font-bold text-sm mb-8 uppercase tracking-widest">Lubrificação registrada!</p>
+        <p class="text-gray-500 font-bold text-sm mb-8 uppercase tracking-widest">Lubrificação registrada com sucesso.</p>
         <button onclick="fecharModal()" class="w-full bg-brand-blue text-white py-4 rounded-2xl font-black uppercase italic tracking-widest shadow-lg shadow-blue-200">OK</button>
     </div>
 </div>
@@ -35,11 +32,11 @@ include_once "layouts/header.php";
                     <div class="grid grid-cols-1 gap-6 mt-2">
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Data de Validade</label>
-                            <input type="date" id="data_validade" name="data_validade" required class="block w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-blue outline-none transition-all">
+                            <input type="date" id="data_validade" name="data_validade" required class="block w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-blue focus:border-brand-blue outline-none transition-all">
                         </div>
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Linha de Produção</label>
-                            <select id="linha" name="linha" required class="block w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-blue outline-none cursor-pointer appearance-none">
+                            <select id="linha" name="linha" required class="block w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-blue focus:border-brand-blue outline-none appearance-none cursor-pointer">
                                 <option value="" disabled selected>Selecione...</option>
                                 <?php foreach(range('N', 'T') as $letra): ?>
                                     <option value="<?= $letra ?>">Linha <?= $letra ?></option>
@@ -52,22 +49,22 @@ include_once "layouts/header.php";
                 <div class="space-y-6 pt-2">
                     <div>
                         <label class="block text-[10px] font-black text-brand-blue uppercase tracking-widest mb-2 ml-1">Identificação da Cavidade</label>
-                        <input type="text" id="cavidade" name="cavidade" maxlength="4" required placeholder="EX: PN01" autocomplete="off" class="block w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-blue outline-none transition-all uppercase">
+                        <input type="text" id="cavidade" name="cavidade" required placeholder="EX: C01" class="block w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-blue focus:border-brand-blue outline-none transition-all uppercase">
                     </div>
                     <div>
                         <label class="block text-[10px] font-black text-brand-blue uppercase tracking-widest mb-2 ml-1">Leitura de Barcode</label>
-                        <input type="text" id="barcode" name="barcode" maxlength="8" required placeholder="Aguardando leitura..." autocomplete="off" class="block w-full px-5 py-4 bg-brand-blue/5 border-2 border-brand-blue/20 rounded-2xl text-sm font-black text-brand-blue outline-none transition-all">
+                        <input type="text" id="barcode" name="barcode" required placeholder="Aguardando leitura..." class="block w-full px-5 py-4 bg-brand-blue/5 border-2 border-brand-blue/20 rounded-2xl text-sm font-black text-brand-blue focus:border-brand-blue outline-none transition-all">
                     </div>
                 </div>
 
-                <button type="submit" id="btnSubmit" class="w-full flex items-center justify-center gap-3 py-5 bg-brand-blue hover:bg-black text-white rounded-2xl shadow-xl transition-all active:scale-[0.98]">
+                <button type="submit" id="btnSubmit" class="w-full flex items-center justify-center gap-3 py-5 bg-brand-blue text-white rounded-2xl shadow-xl active:scale-[0.98]">
                     <span class="font-black italic uppercase tracking-[0.2em] text-xs">Confirmar Lubrificação</span>
                 </button>
             </form>
         </div>
     </div>
     <div class="mt-8 flex justify-center">
-        <a href="index.php" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-blue transition-all">
+        <a href="home" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-blue transition-all">
             <i class="fas fa-chevron-left text-[8px]"></i> Menu Principal
         </a>
     </div>
@@ -76,7 +73,7 @@ include_once "layouts/header.php";
 <script>
 function fecharModal() {
     document.getElementById('modalSucesso').classList.add('hidden');
-    setTimeout(() => { document.getElementById('cavidade').focus(); }, 100);
+    setTimeout(() => { document.getElementById('cavidade').focus(); }, 150);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -87,54 +84,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputCavidade = document.getElementById('cavidade');
     const inputBarcode = document.getElementById('barcode');
 
-    // 1. Persistência Local
+    // Recupera memória
     inputData.value = localStorage.getItem('lub_data') || new Date().toISOString().split('T')[0];
     selectLinha.value = localStorage.getItem('lub_linha') || "";
 
-    // 2. Navegação Enter
+    // Navegação Inteligente (ENTER)
     form.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-            if (e.target === inputCavidade) {
-                e.preventDefault();
-                inputBarcode.focus();
-            } else if (e.target === inputBarcode) {
-                // Deixa o submit natural do form acontecer ou força aqui
-            }
+            e.preventDefault();
+            if (e.target === inputCavidade) inputBarcode.focus();
+            else if (e.target === inputBarcode && inputBarcode.value.trim() !== "") form.requestSubmit();
         }
     });
 
-    // 3. Envio AJAX
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-
+        
         btnSubmit.disabled = true;
-        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GRAVANDO...';
+        btnSubmit.innerHTML = 'GRAVANDO...';
 
-        // Salva estados
         localStorage.setItem('lub_data', inputData.value);
         localStorage.setItem('lub_linha', selectLinha.value);
 
-        const formData = new URLSearchParams();
+        const formData = new URLSearchParams(new FormData(form));
         formData.append('action', 'save_lubrificacao');
-        formData.append('data_validade', inputData.value);
-        formData.append('linha', selectLinha.value);
-        formData.append('cavidade', inputCavidade.value);
-        formData.append('barcode', inputBarcode.value);
 
-        fetch('../../Config/backend.php', {
+        // O CAMINHO É O SEGREDO: Verifique se Config está 2 pastas acima da View
+        fetch('Config/backend.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData.toString()
+            body: formData
         })
-        .then(async res => {
-            const text = await res.text();
-            try {
-                return JSON.parse(text);
-            } catch (err) {
-                console.error("Resposta não é JSON:", text);
-                throw new Error("Erro interno do servidor (PHP explodiu).");
-            }
-        })
+        .then(res => res.json())
         .then(data => {
             if (data.success) {
                 document.getElementById('modalSucesso').classList.remove('hidden');
@@ -146,17 +126,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(err => {
-            console.error(err);
-            alert(err.message || "Erro de conexão.");
+            console.error("Erro no Fetch:", err);
+            alert("Erro de conexão com o servidor. Verifique o console (F12).");
         })
         .finally(() => {
             btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<span class="font-black italic uppercase tracking-[0.2em] text-xs">Confirmar Lubrificação</span>';
+            btnSubmit.innerHTML = 'Confirmar Lubrificação';
         });
     });
 
     inputCavidade.focus();
 });
 </script>
-
-<?php include_once "layouts/footer.php"; ?>

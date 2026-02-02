@@ -143,7 +143,7 @@
     </div>
 
     <div class="mt-16 flex justify-center">
-        <a href="index.php" class="px-8 py-4 bg-gray-50 rounded-2xl flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-brand-blue hover:bg-white border-2 border-transparent hover:border-gray-100 transition-all group shadow-sm">
+        <a href="home" class="px-8 py-4 bg-gray-50 rounded-2xl flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-brand-blue hover:bg-white border-2 border-transparent hover:border-gray-100 transition-all group shadow-sm">
             <i class="fas fa-grid-2 text-xs group-hover:-translate-x-1 transition-transform"></i>
             Menu Principal
         </a>

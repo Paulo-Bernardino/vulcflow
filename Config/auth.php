@@ -1,14 +1,13 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-define('APP_PATH', '/divb2/vulcanizacao/vulcflow/App/views');
+// A URL base deve apontar para a pasta do projeto no servidor
+define('BASE_URL', '/vulcflow/');
 
-if (isset($_GET['logoff'])) {
-    logoutUser();
-}
-
-function valida_ldap($usr, $pwd)
-{
+/**
+ * Validação LDAP Goodyear
+ */
+function valida_ldap($usr, $pwd) {
     if (!function_exists('ldap_connect')) {
         die("Erro Crítico: Extensão LDAP não instalada.");
     }
@@ -28,8 +27,10 @@ function valida_ldap($usr, $pwd)
     return $bind;
 }
 
-function loginUser($username)
-{
+/**
+ * Cria a sessão e busca o nome no banco (FAM_FUNCIONARIO)
+ */
+function loginUser($username) {
     $db = new Database();
     $username = strtoupper(trim($username));
     $userData = getUserFullName($username, $db);
@@ -55,28 +56,38 @@ function loginUser($username)
 
     if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-    $_SESSION['logado']      = true;
-    $_SESSION['user']        = $username;
-    $_SESSION['user_nome']   = $displayName; 
+    $_SESSION['logado']    = true;
+    $_SESSION['user']      = $username;
+    $_SESSION['user_nome'] = $displayName; 
 }
 
-function logoutUser()
-{
+/**
+ * Mata a sessão e manda para a ROTA de login (não o arquivo .php)
+ */
+function logoutUser() {
     if (session_status() === PHP_SESSION_NONE) { session_start(); }
     session_destroy();
-    redirect('/login.php');
+    
+    // REDIRECIONAMENTO PARA A ROTA: Isso evita o loop infinito
+    header("Location: " . BASE_URL . "login");
+    exit;
 }
 
-function checkLogin()
-{
+/**
+ * Middleware para proteger as rotas internamente
+ */
+function checkLogin() {
     if (session_status() === PHP_SESSION_NONE) { session_start(); }
     if (empty($_SESSION['logado'])) {
-        redirect('/login.php');
+        header("Location: " . BASE_URL . "login");
+        exit;
     }
 }
 
-function doLogin()
-{
+/**
+ * Processa o formulário de login (usado dentro da página login.php)
+ */
+function doLogin() {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') return null;
 
     $usuario = $_POST['usuario'] ?? '';
@@ -84,14 +95,18 @@ function doLogin()
 
     if (valida_ldap($usuario, $senha)) {
         loginUser($usuario);
-        redirect('/home.php');
+        // SUCESSO: Redireciona para a ROTA 'home'
+        header("Location: " . BASE_URL . "home");
+        exit;
     }
 
     return "Usuário ou senha inválidos.";
 }
 
-function getUserFullName($username, $db)
-{
+/**
+ * Busca o nome completo via Link Goodyear
+ */
+function getUserFullName($username, $db) {
     try {
         $usernameClean = str_replace("'", "", $username);
         $sql = "SELECT FNC_NOME FROM FAM_FUNCIONARIO@BR_FAM WHERE FNC_USERID = '$usernameClean'";
@@ -100,10 +115,4 @@ function getUserFullName($username, $db)
     } catch (Exception $e) {
         return null;
     }
-}
-
-function redirect($page)
-{
-    header("Location: " . APP_PATH . $page);
-    exit;
 }

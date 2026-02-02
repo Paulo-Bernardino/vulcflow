@@ -1,8 +1,3 @@
-<?php 
-require_once __DIR__ . '/../../Config/init.php'; 
-include_once "layouts/header.php"; 
-?>
-
 <div id="statusModal" class="fixed inset-0 z-[999] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl transform transition-all scale-95 opacity-0" id="modalContent">
         <div id="modalHeader" class="p-8 text-center transition-colors duration-500">
@@ -57,7 +52,7 @@ include_once "layouts/header.php";
     </div>
 
     <div class="mt-8 flex justify-center">
-        <a href="index.php" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-blue transition-all">
+        <a href="home" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-blue transition-all">
             <i class="fas fa-chevron-left text-[8px]"></i> Menu Principal
         </a>
     </div>
@@ -194,5 +189,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
-
-<?php include_once "layouts/footer.php"; ?>
