@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../../Config/init.php'; 
+include_once "layouts/header.php"; 
+?>
 
 <div id="modalSucesso" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-black/50 backdrop-blur-sm p-4">
     <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl text-center transform scale-90 transition-transform duration-300">
@@ -63,7 +67,7 @@
         </div>
     </div>
     <div class="mt-8 flex justify-center">
-        <a href="?page=home" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-blue transition-all">
+        <a href="index.php" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-blue transition-all">
             <i class="fas fa-chevron-left text-[8px]"></i> Menu Principal
         </a>
     </div>
@@ -117,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('cavidade', inputCavidade.value);
         formData.append('barcode', inputBarcode.value);
 
-        fetch('?page=api', {
+        fetch('../../Config/backend.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: formData.toString()
@@ -154,3 +158,5 @@ document.addEventListener('DOMContentLoaded', function() {
     inputCavidade.focus();
 });
 </script>
+
+<?php include_once "layouts/footer.php"; ?>

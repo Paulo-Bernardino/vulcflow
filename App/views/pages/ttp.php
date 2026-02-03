@@ -116,11 +116,19 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-[10px] font-black text-brand-blue uppercase mb-1 ml-1">Temperatura (± 1)</label>
-                        <input type="number" x-model="formData.temp" 
-                            :class="isOutOfSpec(formData.temp, 147, 1) ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-100'"
-                            class="block w-full px-5 py-4 border-2 rounded-2xl text-sm font-black outline-none transition-all">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-black text-brand-blue uppercase mb-1 ml-1">Temp. Espec.</label>
+                            <input type="number" step="0.1" x-model="formData.tempEspec" 
+                                placeholder="Ex: 150"
+                                class="block w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl text-sm font-black text-brand-blue outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-brand-blue uppercase mb-1 ml-1">Temp. Obtida</label>
+                            <input type="number" step="0.1" x-model="formData.tempObtido" 
+                                :class="isOutOfSpec(formData.tempObtido, formData.tempEspec, 1) ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-100'"
+                                class="block w-full px-5 py-4 border-2 rounded-2xl text-sm font-black outline-none transition-all">
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -160,7 +168,7 @@
     </div>
 
     <div class="mt-8 flex justify-center">
-        <a href="home" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400">
+        <a href="?page=home" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400">
             <i class="fas fa-chevron-left text-[8px]"></i> Menu Principal
         </a>
     </div>
@@ -180,33 +188,58 @@ function checkTTP() {
             cavidade: '',
             tempoEspec: '',
             tempoObtido: '',
-            temp: '',
+            tempEspec: '',
+            tempObtido: '',
             extensao: 'NÃO',
             pressao200: '',
             pressao400: ''
         },
         
         isOutOfSpec(val, target, tolerance) {
-            if (!val || val === "") return false;
+            if (!val || val === "" || !target || target === "") return false;
             let v = parseFloat(val);
-            return (v < (target - tolerance) || v > (target + tolerance));
+            let t = parseFloat(target);
+            return (v < (t - tolerance) || v > (t + tolerance));
         },
 
         getOutMessage() {
             let msg = [];
-            if (this.isOutOfSpec(this.formData.temp, 147, 1)) msg.push("TEMPERATURA");
+            if (this.isOutOfSpec(this.formData.tempObtido, this.formData.tempEspec, 1)) {
+                msg.push("TEMPERATURA");
+            }
             if (this.isOutOfSpec(this.formData.pressao200, 200, 5)) msg.push("P200");
             if (this.isOutOfSpec(this.formData.pressao400, 400, 10)) msg.push("P400");
             return msg.join(" e ");
         },
 
         async fetchGTCode() {
-            if (!this.formData.cavidade) return;
-            this.gtCode = "GT-" + Math.floor(1000 + Math.random() * 9000);
+    if (!this.formData.cavidade) {
+        this.gtCode = '';
+        return;
+    }
+
+    try {
+                const response = await fetch('?page=api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }, // Corrigido
+                    body: JSON.stringify({
+                        action: 'searchGTPress',
+                        press: this.formData.cavidade
+                    })
+                });
+
+                if (!response.ok) throw new Error('Erro na requisição');
+
+                const data = await response.text();
+                this.gtCode = data.trim() || 'NÃO ENCONTRADO';
+            } catch (error) {
+                console.error("Erro ao buscar GT:", error);
+                this.gtCode = 'ERRO';
+            }
         },
 
         validateAndSubmit() {
-            const isTempOut = this.isOutOfSpec(this.formData.temp, 147, 1);
+            const isTempOut = this.isOutOfSpec(this.formData.tempObtido, this.formData.tempEspec, 1);
             const isP200Out = this.isOutOfSpec(this.formData.pressao200, 200, 5);
             const isP400Out = this.isOutOfSpec(this.formData.pressao400, 400, 10);
 
@@ -238,6 +271,8 @@ function checkTTP() {
             
             this.isProcessing = false;
             this.showSuccessModal = true;
+            
+            localStorage.setItem('ttp_linha', this.formData.linha);
         }
     }
 }

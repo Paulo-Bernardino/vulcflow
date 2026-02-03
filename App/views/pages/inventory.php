@@ -64,7 +64,7 @@
         </div>
     </div>
     <div class="mt-8 flex justify-center">
-        <a href="home" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-blue transition-all">
+        <a href="?page=home" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-brand-blue transition-all">
             <i class="fas fa-chevron-left text-[8px]"></i> Menu Principal
         </a>
     </div>

@@ -70,7 +70,6 @@
 </style>
 
 <script>
-    // Funções do Modal de Sucesso (Registro)
     function mostrarSucesso() {
         const modal = document.getElementById('modalSucesso');
         modal.classList.remove('hidden');
@@ -83,7 +82,4 @@
         const modal = document.getElementById('modalSucesso');
         modal.classList.add('hidden');
     }
-
-    // A lógica de Logout é controlada pelo Alpine.js no Header:
-    // @click="showLogoutModal = true; setTimeout(() => { window.location.href = '?logoff' }, 1700)"
 </script>

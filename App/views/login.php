@@ -1,10 +1,6 @@
 <?php
-/**
- * IMPORTANTE: No modelo de roteador, os arquivos de Config já foram 
- * carregados pelo index.php. Usamos caminhos absolutos baseados na raiz.
- */
-require_once __DIR__ . '/../../../Config/config.php';
-require_once __DIR__ . '/../../../Config/auth.php';
+require_once __DIR__ . '/../../Config/config.php';
+require_once __DIR__ . '/../../Config/auth.php';
 
 $erroMsg = null;
 $loginSucesso = false;
@@ -13,7 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['usuario'] ?? '';
     $senha   = $_POST['senha'] ?? '';
 
-    // Utiliza as funções do seu arquivo auth.php
     if (valida_ldap($usuario, $senha)) {
         loginUser($usuario);
         $loginSucesso = true;
@@ -29,19 +24,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CureTire Flow B2</title>
-    
-    <base href="/divb2/vulcanizacao/vulcflow/">
-
-    <link rel="stylesheet" href="App/assets/css/style.css">
+    <link rel="shortcut icon" href="layout/img/favicon.png" />
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); } }
+        @keyframes scaleCheck { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        .animate-bounceIn { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
+        .animate-scaleCheck { animation: scaleCheck 0.3s 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="App/assets/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); } }
         @keyframes scaleCheck { 0% { transform: scale(0); } 100% { transform: scale(1); } }
         .animate-bounceIn { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
         .animate-scaleCheck { animation: scaleCheck 0.3s 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
-        [x-cloak] { display: none !important; }
     </style>
 </head>
 
@@ -63,11 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h2 class="text-white font-black italic uppercase tracking-tighter text-2xl">Acesso Restrito</h2>
                 </div>
 
-                <form id="loginForm" method="POST" action="<?= BASE_URL ?>?page=login" class="p-8 space-y-5">
+                <form id="loginForm" method="POST" action="" class="p-8 space-y-5">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black uppercase tracking-widest text-brand-blue/60 ml-1">ID do Operador</label>
                         <input type="text" name="usuario" placeholder="DIGITE SEU ID" required
-                            class="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-blue focus:ring-0 transition-all outline-none uppercase">
+                            class="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-brand-blue focus:ring-0 transition-all outline-none">
                     </div>
 
                     <div class="space-y-2">
@@ -125,16 +123,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script>
         <?php if ($loginSucesso): ?>
-            // Toca o som de sucesso
             window.addEventListener('load', () => {
                 const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
                 audio.volume = 0.2;
-                audio.play().catch(e => console.log("Áudio bloqueado pelo navegador"));
+                audio.play().catch(e => console.log("Áudio aguardando interação"));
             });
         <?php endif; ?>
 
         function proceedToDashboard() {
-            window.location.href = "<?= BASE_URL ?>?page=home";
+            window.location.href = "index.php"; 
         }
     </script>
 </body>

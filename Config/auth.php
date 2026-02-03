@@ -2,7 +2,7 @@
 require_once __DIR__ . '/config.php';
 
 // A URL base deve apontar para a pasta do projeto no servidor
-define('BASE_URL', '/vulcflow/');
+define('BASE_URL', '/divb2/vulcanizacao/vulcflow/');
 
 /**
  * Validação LDAP Goodyear
@@ -69,7 +69,7 @@ function logoutUser() {
     session_destroy();
     
     // REDIRECIONAMENTO PARA A ROTA: Isso evita o loop infinito
-    header("Location: " . BASE_URL . "login");
+    header("Location: " . BASE_URL . "?page=login");
     exit;
 }
 
@@ -79,7 +79,7 @@ function logoutUser() {
 function checkLogin() {
     if (session_status() === PHP_SESSION_NONE) { session_start(); }
     if (empty($_SESSION['logado'])) {
-        header("Location: " . BASE_URL . "login");
+        header("Location: " . BASE_URL . "?page=login");
         exit;
     }
 }
@@ -96,7 +96,7 @@ function doLogin() {
     if (valida_ldap($usuario, $senha)) {
         loginUser($usuario);
         // SUCESSO: Redireciona para a ROTA 'home'
-        header("Location: " . BASE_URL . "home");
+        header("Location: " . BASE_URL . "?page=home");
         exit;
     }
 
